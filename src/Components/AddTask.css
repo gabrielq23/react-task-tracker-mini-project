@@ -1,0 +1,13 @@
+.new-task-container {
+    position: fixed; /* Position the popup relative to the viewport */
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%); /* Center the popup */
+    background-color: #fff; /* White background for the popup */
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3); /* Box shadow for a popup effect */
+    z-index: 1000; /* Ensure the popup is on top */
+    width: 400px; /* Set a width for the popup */
+    max-width: 100%; /* Ensure the popup is responsive */
+  }

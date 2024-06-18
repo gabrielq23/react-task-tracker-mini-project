@@ -1,24 +1,58 @@
-import logo from './logo.svg';
-import './App.css';
+import AddTask from "./Components/AddTask";
+import { useEffect, useState } from "react";
+import ToDo from "./Components/ToDo";
+import { useDrop } from "react-dnd";
+
 
 function App() {
+
+  const[taskList, setTaskList] = useState([]);
+  const[completed, setCompleted] = useState([]);
+
+  useEffect(() =>{
+    let array = localStorage.getItem("tasklist");
+    if (array){
+      setTaskList(JSON.parse(array));
+    }
+  }, []);
+
+  const[{isOver}, drop] = useDrop(() => ({
+    accept: "todo",
+    drop: (item) => addToCompleted(item.id, item.projectName, item.taskDescription, item.timestamp, item.duration),
+    collect: (monitor) => ({
+      isOver: !!monitor.isOver,
+    })
+  }))
+
+  function addToCompleted(id, projectName, taskDescription, timestamp, duration){
+    const moveTask = taskList.filter((task) => id === task.id);
+    setCompleted((completed) => [...completed, {moveTask, projectName, taskDescription, timestamp, duration}])
+    setTaskList((prevTaskList) => prevTaskList.filter((_,index) => index !== id))
+  }
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <h1>Task Tracker</h1>
+      <div>
+        <p>Click</p>
+          <AddTask taskList={taskList} setTaskList={setTaskList}/>
+        <p> to add a new task!</p>
+      </div>
+      <div>
+        <div>
+          <h2>To Do:</h2>
+          {taskList.map((task, index) => 
+              <ToDo key={index} task={task} index={index} taskList={taskList} setTaskList={setTaskList}/>
+          )}
+        </div>
+        <div ref={drop}>
+          <h2>Completed:</h2>
+          {completed.map((task, index) =>
+            <ToDo key={index} task={task} index={index} taskList={taskList} setTaskList={setTaskList}/>
+          )}
+        </div>
+      </div>
+    </>
   );
 }
 
